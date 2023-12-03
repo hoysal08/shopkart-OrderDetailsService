@@ -47,37 +47,48 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetails getOrder(String orderId) throws OrderProcessingException, OrderNotFoundException {
-        if (orderId == null || orderId.isEmpty()) {
-            throw new OrderProcessingException("Invalid orderId for retrieving the order.");
-        }
+        try {
+            if (orderId == null || orderId.isEmpty()) {
+                throw new OrderProcessingException("Invalid orderId for retrieving the order.");
+            }
 
-        Optional<OrderDetails> orderOptional = orderRepository.findById(orderId);
+            Optional<OrderDetails> orderOptional = orderRepository.findById(orderId);
 
-        if (!orderOptional.isPresent()) {
-            throw new OrderNotFoundException("Order not found for orderId: " + orderId);
+            if (!orderOptional.isPresent()) {
+                throw new OrderNotFoundException("Order not found for orderId: " + orderId);
+            }
+            OrderDetails order = orderOptional.get();
+            return order;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
-        OrderDetails order = orderOptional.get();
-        return order;
     }
 
     @Override
     public boolean updateOrder(OrderDetails updatedOrder) throws OrderProcessingException, OrderNotFoundException {
-        if (updatedOrder == null || updatedOrder.getOrderId() == null) {
-            throw new OrderProcessingException("Invalid input for updating the order.");
+        try {
+            if (updatedOrder == null || updatedOrder.getOrderId() == null) {
+                throw new OrderProcessingException("Invalid input for updating the order.");
+            }
+
+            Optional<OrderDetails> orderOptional = orderRepository.findById(updatedOrder.getOrderId());
+
+            if (!orderOptional.isPresent()) {
+                throw new OrderNotFoundException("Order not found for orderId: " + updatedOrder.getOrderId());
+            }
+
+            OrderDetails orderToUpdate = orderOptional.get();
+
+            BeanUtils.copyProperties(updatedOrder, orderToUpdate);
+
+            orderRepository.save(orderToUpdate);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
 
-        Optional<OrderDetails> orderOptional = orderRepository.findById(updatedOrder.getOrderId());
-
-        if (!orderOptional.isPresent()) {
-            throw new OrderNotFoundException("Order not found for orderId: " + updatedOrder.getOrderId());
-        }
-
-        OrderDetails orderToUpdate = orderOptional.get();
-
-        BeanUtils.copyProperties(updatedOrder, orderToUpdate);
-
-        orderRepository.save(orderToUpdate);
-        return true;
     }
 
     @Override
@@ -90,8 +101,7 @@ public class OrderServiceImpl implements OrderService {
 
             return orderDetailsList;
         } catch (Exception e) {
-            // Handle exceptions
-            e.printStackTrace(); // Log the exception
+            e.printStackTrace();
             throw new OrderProcessingException("An error occurred while fetching orders.");
         }
 

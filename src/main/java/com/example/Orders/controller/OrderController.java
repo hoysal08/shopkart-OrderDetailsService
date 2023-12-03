@@ -1,6 +1,8 @@
 package com.example.Orders.controller;
 
+import com.example.Orders.dto.OrderDetailsDTO;
 import com.example.Orders.entity.OrderDetails;
+import com.example.Orders.helper.GlobalHelper;
 import com.example.Orders.service.OrderService;
 import com.example.Orders.service.impl.OrderNotFoundException;
 import com.example.Orders.service.impl.OrderProcessingException;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,8 +22,12 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> addOrders(@RequestBody List<OrderDetails> orderDetailsList) {
+    public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) {
         try {
+            List<OrderDetails> orderDetailsList = new ArrayList<>();
+            for (OrderDetailsDTO orderDetailsDTO : orderDetailsDTOSList) {
+                orderDetailsList.add(GlobalHelper.OrderDetailsDTOToOrderDetails(orderDetailsDTO));
+            }
             boolean success = orderService.addOrders(orderDetailsList);
             if (success) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Orders added successfully.");
@@ -36,7 +43,8 @@ public class OrderController {
     public ResponseEntity<?> getOrder(@PathVariable String orderId) {
         try {
             OrderDetails orderDetails = orderService.getOrder(orderId);
-            return ResponseEntity.ok(orderDetails);
+            OrderDetailsDTO orderDetailsDTO = GlobalHelper.OrderDetailsToOrderDetailsDTO(orderDetails);
+            return ResponseEntity.ok(orderDetailsDTO);
         } catch (OrderProcessingException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         } catch (OrderNotFoundException ex) {
@@ -45,9 +53,10 @@ public class OrderController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> updateOrder(@RequestBody OrderDetails inputOrderDetails) {
+    public ResponseEntity<String> updateOrder(@RequestBody OrderDetailsDTO inputOrderDetailsDTO) {
         try {
-            boolean success = orderService.updateOrder(inputOrderDetails);
+            OrderDetails orderDetails = GlobalHelper.OrderDetailsDTOToOrderDetails(inputOrderDetailsDTO);
+            boolean success = orderService.updateOrder(orderDetails);
             if (success) {
                 return ResponseEntity.ok("Order updated successfully.");
             } else {
@@ -64,7 +73,11 @@ public class OrderController {
     public ResponseEntity<?> getAllOrders() {
         try {
             List<OrderDetails> orders = orderService.getAllOrders();
-            return ResponseEntity.ok(orders);
+            List<OrderDetailsDTO> orderDetailsDTOS = new ArrayList<>();
+            for (OrderDetails orderDetails : orders) {
+                orderDetailsDTOS.add(GlobalHelper.OrderDetailsToOrderDetailsDTO(orderDetails));
+            }
+            return ResponseEntity.ok(orderDetailsDTOS);
         } catch (OrderProcessingException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
@@ -74,7 +87,11 @@ public class OrderController {
     public ResponseEntity<?> getOrderByUserId(@PathVariable String userId) {
         try {
             List<OrderDetails> orders = orderService.getOrderByUserId(userId);
-            return ResponseEntity.ok(orders);
+            List<OrderDetailsDTO> orderDetailsDTOS = new ArrayList<>();
+            for (OrderDetails orderDetails : orders) {
+                orderDetailsDTOS.add(GlobalHelper.OrderDetailsToOrderDetailsDTO(orderDetails));
+            }
+            return ResponseEntity.ok(orderDetailsDTOS);
         } catch (OrderProcessingException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
@@ -84,7 +101,11 @@ public class OrderController {
     public ResponseEntity<?> getOrderByProductId(@PathVariable String productId) {
         try {
             List<OrderDetails> orders = orderService.getOrderByProductId(productId);
-            return ResponseEntity.ok(orders);
+            List<OrderDetailsDTO> orderDetailsDTOS = new ArrayList<>();
+            for (OrderDetails orderDetails : orders) {
+                orderDetailsDTOS.add(GlobalHelper.OrderDetailsToOrderDetailsDTO(orderDetails));
+            }
+            return ResponseEntity.ok(orderDetailsDTOS);
         } catch (OrderProcessingException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
