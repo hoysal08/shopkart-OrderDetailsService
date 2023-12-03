@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -13,9 +15,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class CartItem {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String Orderid;
+    private String cartId = UUID.randomUUID().toString();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_user_id")

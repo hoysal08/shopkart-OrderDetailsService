@@ -11,9 +11,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends CrudRepository<OrderDetails,String>{
 
-    @Query("SELECT o FROM OrderDetails o WHERE o.userId = :userId")
+    @Query("SELECT o FROM OrderDetails o WHERE o.userId = ?1")
     List<OrderDetails> findByUserId(String userId);
 
-    @Query("SELECT o FROM OrderDetails o WHERE o.productId = :productId")
+    @Query("SELECT o FROM OrderDetails o WHERE o.productId = ?1")
     List<OrderDetails> findByProductId(String productId);
 }

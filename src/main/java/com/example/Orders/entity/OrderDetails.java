@@ -15,12 +15,7 @@ import javax.persistence.*;
 @Entity
 public class OrderDetails {
 
-    public static final String SEQ_GEN_ALIAS = "seq_gen_alias";
-    public static final String SEQ_GEN_STRATEGY = "uuid2";
-
     @Id
-    @GeneratedValue(generator = OrderDetails.SEQ_GEN_ALIAS)
-    @GenericGenerator(name = OrderDetails.SEQ_GEN_ALIAS, strategy = OrderDetails.SEQ_GEN_STRATEGY)
     private String orderId;
 
     private String merchantId;

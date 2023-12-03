@@ -24,7 +24,7 @@ public class GlobalHelper {
 
     public static OrderDetails OrderDetailsDTOToOrderDetails(OrderDetailsDTO orderDetailsDTO) {
         OrderDetails orderDetails = new OrderDetails();
-        BeanUtils.copyProperties(orderDetails, orderDetailsDTO);
+        BeanUtils.copyProperties(orderDetailsDTO, orderDetails);
         return orderDetails;
     }
 

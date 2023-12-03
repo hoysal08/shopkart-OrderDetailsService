@@ -1,7 +1,12 @@
 package com.example.Orders.dto;
 
+import lombok.Data;
+
+import java.util.UUID;
+
+@Data
 public class CartItemDTO {
-    private Long id;
+    private String cartId = UUID.randomUUID().toString();;
 
     private String productId;
 

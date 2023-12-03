@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -25,11 +26,10 @@ public class OrderServiceImpl implements OrderService {
             }
             for (OrderDetails orderDetails : orderDetailsArray) {
                 if (orderDetails == null) {
-                    // Log or handle invalid orderDetails
-                    continue; // Skip processing this orderDetails
+                    continue;
                 }
-
                 OrderDetails order = new OrderDetails();
+                order.setOrderId(UUID.randomUUID().toString());
                 order.setMerchantId(orderDetails.getMerchantId());
                 order.setProductId(orderDetails.getProductId());
                 order.setUserId(orderDetails.getUserId());
