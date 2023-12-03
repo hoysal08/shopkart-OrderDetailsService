@@ -1,22 +1,26 @@
 package com.example.Orders.controller;
 
 import com.example.Orders.dto.CartItemDTO;
+import com.example.Orders.entity.Cart;
 import com.example.Orders.entity.CartItem;
 import com.example.Orders.helper.GlobalHelper;
 import com.example.Orders.service.CartService;
 import com.example.Orders.service.impl.CartNotFoundException;
 import com.example.Orders.service.impl.CartProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/carts")
 public class CartController {
 
+    @Autowired
     private CartService cartService;
 
     @PostMapping("/create")
@@ -27,8 +31,14 @@ public class CartController {
         try {
             List<CartItem> cartItems = new ArrayList<>();
             for (CartItemDTO cartItemDTO : cartItemDTOs) {
-                cartItems.add(GlobalHelper.CartItemDTOToCartItem(cartItemDTO));
+                CartItem cartItem = GlobalHelper.CartItemDTOToCartItem(cartItemDTO);
+                Cart cart = new Cart();
+                cart.setUserId(userId);
+                cartItem.setCart(cart);
+                cartItem.setCartId(UUID.randomUUID().toString());
+                cartItems.add(cartItem);
             }
+
             boolean success = cartService.createCart(userId, cartItems);
             if (success) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Cart created successfully.");

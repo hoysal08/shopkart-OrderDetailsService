@@ -4,6 +4,7 @@ import com.example.Orders.entity.Cart;
 import com.example.Orders.entity.CartItem;
 import com.example.Orders.repository.CartRepository;
 import com.example.Orders.service.CartService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,22 +12,28 @@ import java.util.List;
 @Service
 public class CartServiceImpl implements CartService {
 
+    @Autowired
     private CartRepository cartRepository;
 
     @Override
     public boolean createCart(String userId, List<CartItem> cartItems) throws CartProcessingException {
-        if (userId == null || userId.isEmpty() || cartItems == null || cartItems.isEmpty()) {
-            throw new CartProcessingException("Invalid input for creating a cart.");
-        }
-        Cart cart = new Cart();
-        cart.setUserId(userId);
+        try {
+            if (userId == null || userId.isEmpty() || cartItems == null || cartItems.isEmpty()) {
+                throw new CartProcessingException("Invalid input for creating a cart.");
+            }
+            Cart cart = new Cart();
+            cart.setUserId(userId);
 
-        for (CartItem cartItem : cartItems) {
-            cartItem.setCart(cart);
+            for (CartItem cartItem : cartItems) {
+                cartItem.setCart(cart);
+            }
+            cart.setCartItems(cartItems);
+            cartRepository.save(cart);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        cartRepository.save(cart);
-
-        return true;
+        return false;
     }
 
     @Override
@@ -41,10 +48,14 @@ public class CartServiceImpl implements CartService {
             throw new CartNotFoundException("Cart not found for userId: " + userId);
         }
 
-        existingCart.getCartItems().clear();
+        List<CartItem> existingCartItem = existingCart.getCartItems();
 
-        for (CartItem newCartItem : newCartItems) {
-            newCartItem.setCart(existingCart);
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+
+        for (CartItem cartItem : newCartItems) {
+            cartItem.setCart(cart);
+            existingCartItem.add(cartItem);
         }
         cartRepository.save(existingCart);
         return true;

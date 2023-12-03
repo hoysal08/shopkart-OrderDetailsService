@@ -31,6 +31,4 @@ public class CartItem {
 
     private Float price;
 
-    public void setCart(Cart cart) {
-    }
 }
