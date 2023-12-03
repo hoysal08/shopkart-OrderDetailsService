@@ -18,9 +18,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderRepository orderRepository;
 
     @Override
-    public boolean addOrders(OrderDetails[] orderDetailsArray) throws OrderProcessingException {
+    public boolean addOrders(List<OrderDetails> orderDetailsArray) throws OrderProcessingException {
         try {
-            if (orderDetailsArray == null || orderDetailsArray.length == 0) {
+            if (orderDetailsArray == null || orderDetailsArray.size() == 0) {
                 throw new OrderProcessingException("OrderDetails array is empty or null.");
             }
             for (OrderDetails orderDetails : orderDetailsArray) {

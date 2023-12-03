@@ -7,7 +7,7 @@ import com.example.Orders.service.impl.OrderProcessingException;
 import java.util.List;
 
 public interface OrderService {
-    boolean addOrders(OrderDetails[] orderDetailsArray) throws OrderProcessingException;
+    boolean addOrders(List<OrderDetails> orderDetailsArray) throws OrderProcessingException;
 
     OrderDetails getOrder(String orderId) throws OrderProcessingException, OrderNotFoundException;
 
