@@ -2,6 +2,8 @@ package com.example.Orders.controller;
 
 import com.example.Orders.dto.OrderDetailsDTO;
 import com.example.Orders.entity.OrderDetails;
+import com.example.Orders.feign.OrdersToMerchantFeign;
+import com.example.Orders.feign.OrdersToProductFeign;
 import com.example.Orders.helper.GlobalHelper;
 import com.example.Orders.service.OrderService;
 import com.example.Orders.service.impl.OrderNotFoundException;
@@ -21,12 +23,22 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private OrdersToProductFeign  ordersToProductFeign;
+
+    @Autowired
+    OrdersToMerchantFeign ordersToMerchantFeign;
+
     @PostMapping("/add")
     public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) {
         try {
             List<OrderDetails> orderDetailsList = new ArrayList<>();
             for (OrderDetailsDTO orderDetailsDTO : orderDetailsDTOSList) {
                 orderDetailsList.add(GlobalHelper.OrderDetailsDTOToOrderDetails(orderDetailsDTO));
+                ordersToProductFeign.updateStockByProductIdandMerchantId(orderDetailsDTO.getProductId(),
+                        orderDetailsDTO.getProductId(),orderDetailsDTO.getQuantity(),"sold");
+                ordersToMerchantFeign.updateProductsSold(orderDetailsDTO.getMerchantId(),orderDetailsDTO.getQuantity(),
+                        "sold");
             }
             boolean success = orderService.addOrders(orderDetailsList);
             if (success) {
@@ -57,6 +69,8 @@ public class OrderController {
         try {
             OrderDetails orderDetails = GlobalHelper.OrderDetailsDTOToOrderDetails(inputOrderDetailsDTO);
             boolean success = orderService.updateOrder(orderDetails);
+            ordersToProductFeign.updateStockByProductIdandMerchantId(inputOrderDetailsDTO.getProductId(),
+                    inputOrderDetailsDTO.getMerchantId(),inputOrderDetailsDTO.getQuantity(),"update");
             if (success) {
                 return ResponseEntity.ok("Order updated successfully.");
             } else {
