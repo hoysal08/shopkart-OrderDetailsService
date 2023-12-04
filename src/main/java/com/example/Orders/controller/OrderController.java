@@ -33,10 +33,12 @@ public class OrderController {
     public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) {
         try {
             List<OrderDetails> orderDetailsList = new ArrayList<>();
+//            System.out.println(orderDetailsDTOSList.size());
             for (OrderDetailsDTO orderDetailsDTO : orderDetailsDTOSList) {
                 orderDetailsList.add(GlobalHelper.OrderDetailsDTOToOrderDetails(orderDetailsDTO));
                 ordersToProductFeign.updateStockByProductIdandMerchantId(orderDetailsDTO.getProductId(),
-                        orderDetailsDTO.getProductId(),orderDetailsDTO.getQuantity(),"sold");
+                        orderDetailsDTO.getMerchantId(),orderDetailsDTO.getQuantity(),"sold");
+//                System.out.println(orderDetailsDTO.getQuantity());
                 ordersToMerchantFeign.updateProductsSold(orderDetailsDTO.getMerchantId(),orderDetailsDTO.getQuantity(),
                         "sold");
             }
