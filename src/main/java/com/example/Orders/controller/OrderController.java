@@ -4,7 +4,9 @@ import com.example.Orders.dto.OrderDetailsDTO;
 import com.example.Orders.entity.OrderDetails;
 import com.example.Orders.feign.OrdersToMerchantFeign;
 import com.example.Orders.feign.OrdersToProductFeign;
+import com.example.Orders.feign.OrdersToUserFeign;
 import com.example.Orders.helper.GlobalHelper;
+import com.example.Orders.service.EmailService;
 import com.example.Orders.service.OrderService;
 import com.example.Orders.service.impl.OrderNotFoundException;
 import com.example.Orders.service.impl.OrderProcessingException;
@@ -13,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +33,14 @@ public class OrderController {
     @Autowired
     OrdersToMerchantFeign ordersToMerchantFeign;
 
+    @Autowired
+    OrdersToUserFeign ordersToUserFeign;
+
+    @Autowired
+    EmailService emailService;
+
     @PostMapping("/add")
-    public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) {
+    public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) throws AddressException {
         try {
             List<OrderDetails> orderDetailsList = new ArrayList<>();
 //            System.out.println(orderDetailsDTOSList.size());
@@ -43,6 +53,12 @@ public class OrderController {
                         "sold");
             }
             boolean success = orderService.addOrders(orderDetailsList);
+            String userIdOfuser = orderDetailsDTOSList.get(0).getUserId();
+            String userEmail = ordersToUserFeign.retrieveEmail(userIdOfuser).toString();
+            System.out.println(userEmail +"Here is the userEmail");
+            InternetAddress internetAddress = new InternetAddress(userEmail.trim());
+            emailService.sendSimpleMessage(internetAddress.getAddress(),"Your Order From ShopKart");
+
             if (success) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Orders added successfully.");
             } else {
