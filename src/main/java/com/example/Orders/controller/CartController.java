@@ -89,4 +89,9 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
+    @DeleteMapping("/{userId}/{cartId}")
+    public ResponseEntity<?> deleteCartItem(@PathVariable String userId, @PathVariable String cartId){
+        cartService.deleteCartItem(userId,cartId);
+        return ResponseEntity.ok(true);
+    }
 }
