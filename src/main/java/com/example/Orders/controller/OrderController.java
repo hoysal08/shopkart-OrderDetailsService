@@ -20,6 +20,7 @@ import javax.mail.internet.InternetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {

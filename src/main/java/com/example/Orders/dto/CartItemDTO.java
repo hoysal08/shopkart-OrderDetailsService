@@ -15,4 +15,5 @@ public class CartItemDTO {
     private Long quantity;
 
     private Float price;
+
 }
