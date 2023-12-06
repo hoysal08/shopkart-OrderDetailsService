@@ -1,5 +1,7 @@
 package com.example.Orders.service;
 
+import com.example.Orders.dto.ProductDto;
+import com.example.Orders.dto.ProductIdDto;
 import com.example.Orders.entity.CartItem;
 import com.example.Orders.service.impl.CartNotFoundException;
 import com.example.Orders.service.impl.CartProcessingException;
@@ -14,4 +16,6 @@ public interface CartService {
     List<CartItem> getCart(String userId) throws CartProcessingException, CartNotFoundException;
 
     boolean deleteCartItem (String userId , String cartId);
+
+    List<ProductDto> getProductByProductIds (List<ProductIdDto> prodId);
 }
