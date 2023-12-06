@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ import javax.persistence.*;
 public class OrderDetails {
 
     @Id
-    private String orderId;
+    private String orderId= UUID.randomUUID().toString();;
 
     private String merchantId;
 
