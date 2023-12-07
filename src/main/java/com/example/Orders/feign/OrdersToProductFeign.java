@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
-@FeignClient(value = "orders-to-product-feign" , url = "http://localhost:8099" , fallbackFactory =  OrdersToProductFeignFallBack.class)
+@FeignClient(value = "orders-to-product-feign" , url = "http://10.20.3.164:8099" , fallbackFactory =  OrdersToProductFeignFallBack.class)
 public interface OrdersToProductFeign {
 
     @RequestMapping(method = RequestMethod.PUT , value = "/api/products/{productId}/merchant/{merchantId}/{stock}/{what}")

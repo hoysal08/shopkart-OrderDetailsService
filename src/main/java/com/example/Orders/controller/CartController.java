@@ -100,7 +100,7 @@ public class CartController {
         return ResponseEntity.ok(true);
     }
     @PostMapping("/getProbyIds")
-    public ResponseEntity<List<ProductDto>> getprodByProdIds(@RequestBody List<ProductIdDto> prodIds){
+    public ResponseEntity<List<ProductDto>> getprodByProdIds(@RequestBody List<ProductIdDto> prodIds ){
         List<ProductDto> prodsendingDto = cartService.getProductByProductIds(prodIds);
         return ResponseEntity.ok(prodsendingDto);
     }

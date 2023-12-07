@@ -100,7 +100,9 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<ProductDto> getProductByProductIds(List<ProductIdDto> prodId) {
+
         return ordersToProductFeign.getProdbyprodIds(prodId).getBody();
+
     }
 
 
