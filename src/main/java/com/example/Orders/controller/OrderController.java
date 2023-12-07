@@ -56,6 +56,7 @@ public class OrderController {
             boolean success = orderService.addOrders(orderDetailsList);
             String userIdOfuser = orderDetailsDTOSList.get(0).getUserId();
             String userEmail = ordersToUserFeign.retrieveEmail(userIdOfuser).toString();
+
             System.out.println(userEmail + "Here is the userEmail");
             InternetAddress internetAddress = new InternetAddress(userEmail.trim());
             emailService.sendSimpleMessage(internetAddress.getAddress(), "Your Order From ShopKart");

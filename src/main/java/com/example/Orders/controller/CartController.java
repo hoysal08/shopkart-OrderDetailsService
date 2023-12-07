@@ -1,8 +1,11 @@
 package com.example.Orders.controller;
 
 import com.example.Orders.dto.CartItemDTO;
+import com.example.Orders.dto.ProductDto;
+import com.example.Orders.dto.ProductIdDto;
 import com.example.Orders.entity.Cart;
 import com.example.Orders.entity.CartItem;
+import com.example.Orders.feign.OrdersToProductFeign;
 import com.example.Orders.helper.GlobalHelper;
 import com.example.Orders.service.CartService;
 import com.example.Orders.service.impl.CartNotFoundException;
@@ -23,6 +26,8 @@ public class CartController {
 
     @Autowired
     private CartService cartService;
+
+
 
     @PostMapping("/create")
     public ResponseEntity<String> createCart(
@@ -116,5 +121,10 @@ public class CartController {
     public ResponseEntity<?> deleteCartItem(@PathVariable String userId, @PathVariable String cartId) {
         cartService.deleteCartItem(userId, cartId);
         return ResponseEntity.ok(true);
+    }
+    @PostMapping("/getProbyIds")
+    public ResponseEntity<List<ProductDto>> getprodByProdIds(@RequestBody List<ProductIdDto> prodIds ){
+        List<ProductDto> prodsendingDto = cartService.getProductByProductIds(prodIds);
+        return ResponseEntity.ok(prodsendingDto);
     }
 }
