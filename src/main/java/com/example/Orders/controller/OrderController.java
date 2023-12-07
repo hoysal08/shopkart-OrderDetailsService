@@ -37,8 +37,8 @@ public class OrderController {
     @Autowired
     OrdersToUserFeign ordersToUserFeign;
 
-//    @Autowired
-//    EmailService emailService;
+    @Autowired
+    EmailService emailService;
 
     @PostMapping("/add")
     public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) throws AddressException {
@@ -57,8 +57,9 @@ public class OrderController {
             String userIdOfuser = orderDetailsDTOSList.get(0).getUserId();
             String userEmail = ordersToUserFeign.retrieveEmail(userIdOfuser).toString();
             System.out.println(userEmail +"Here is the userEmail");
+
             InternetAddress internetAddress = new InternetAddress(userEmail.trim());
-//            emailService.sendSimpleMessage(internetAddress.getAddress(),"Your Order From ShopKart");
+            emailService.sendSimpleMessage(internetAddress.getAddress(),"Your Order From ShopKart");
 
             if (success) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Orders added successfully.");

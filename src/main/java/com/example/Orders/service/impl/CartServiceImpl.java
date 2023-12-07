@@ -1,7 +1,10 @@
 package com.example.Orders.service.impl;
 
+import com.example.Orders.dto.ProductDto;
+import com.example.Orders.dto.ProductIdDto;
 import com.example.Orders.entity.Cart;
 import com.example.Orders.entity.CartItem;
+import com.example.Orders.feign.OrdersToProductFeign;
 import com.example.Orders.repository.CartRepository;
 import com.example.Orders.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,9 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    OrdersToProductFeign ordersToProductFeign;
 
     @Override
     public boolean createCart(String userId, List<CartItem> cartItems) throws CartProcessingException {
@@ -91,6 +97,15 @@ public class CartServiceImpl implements CartService {
 
         return false;
     }
+
+    @Override
+    public List<ProductDto> getProductByProductIds(List<ProductIdDto> prodId) {
+
+        return ordersToProductFeign.getProdbyprodIds(prodId).getBody();
+
+    }
+
+
 
 
 }
