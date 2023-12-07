@@ -7,6 +7,7 @@ import com.example.Orders.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,6 +62,30 @@ public class CartServiceImpl implements CartService {
         return true;
     }
 
+    public boolean createOrUpdateCart(String userId, CartItem newCartItems) throws CartProcessingException, CartNotFoundException {
+        if (userId == null || userId.isEmpty() || newCartItems == null) {
+            throw new CartProcessingException("Invalid input for updating the cart.");
+        }
+
+        Cart existingCart = cartRepository.findByUserId(userId);
+        List<CartItem> cartItem = new ArrayList<>();
+        cartItem.add(newCartItems);
+
+        if (existingCart == null) {
+//            Cart cart = new Cart();
+//            cart.setUserId(userId);
+//            newCartItems.setCart(cart);
+//            cart.setCartItems(cartItem);
+//            cartRepository.save(cart);
+            return createCart(userId,cartItem);
+        }
+        else{
+            return  updateCart(userId,cartItem);
+        }
+
+
+    }
+
     @Override
     public List<CartItem> getCart(String userId) throws CartProcessingException, CartNotFoundException {
         if (userId == null || userId.isEmpty()) {
@@ -80,8 +105,8 @@ public class CartServiceImpl implements CartService {
     public boolean deleteCartItem(String userId, String cartId) {
         Cart cart = cartRepository.findByUserId(userId);
         List<CartItem> cartItems = cart.getCartItems();
-        for(CartItem cartItem : cartItems){
-            if (cartItem.getCartId().equals(cartId)){
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getCartId().equals(cartId)) {
                 cartItems.remove(cartItem);
                 cartRepository.save(cart);
                 return true;

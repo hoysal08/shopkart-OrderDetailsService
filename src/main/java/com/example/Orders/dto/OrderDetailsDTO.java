@@ -20,4 +20,5 @@ public class OrderDetailsDTO {
     private Long quantity;
 
     private Float totalPrice;
+
 }

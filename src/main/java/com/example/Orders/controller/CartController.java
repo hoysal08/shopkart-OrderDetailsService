@@ -74,6 +74,28 @@ public class CartController {
         }
     }
 
+    @PostMapping("/createOrUpdate")
+    public ResponseEntity<String> createOrUpddate(@RequestParam String userId,
+                                                  @RequestBody CartItemDTO cartItemDTO) {
+        try {
+            CartItem cartItems = new CartItem();
+
+            cartItems = (GlobalHelper.CartItemDTOToCartItem(cartItemDTO));
+
+            boolean success = cartService.createOrUpdateCart(userId, cartItems);
+            if (success) {
+                return ResponseEntity.ok("Cart updated successfully.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update cart.");
+            }
+        } catch (CartProcessingException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        } catch (CartNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        }
+
+    }
+
     @GetMapping("/{userId}")
     public ResponseEntity<?> getCart(@PathVariable String userId) {
         try {
@@ -89,9 +111,10 @@ public class CartController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
     }
+
     @DeleteMapping("/{userId}/{cartId}")
-    public ResponseEntity<?> deleteCartItem(@PathVariable String userId, @PathVariable String cartId){
-        cartService.deleteCartItem(userId,cartId);
+    public ResponseEntity<?> deleteCartItem(@PathVariable String userId, @PathVariable String cartId) {
+        cartService.deleteCartItem(userId, cartId);
         return ResponseEntity.ok(true);
     }
 }

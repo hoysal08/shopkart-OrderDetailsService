@@ -29,7 +29,7 @@ public class OrderController {
     private OrderService orderService;
 
     @Autowired
-    private OrdersToProductFeign  ordersToProductFeign;
+    private OrdersToProductFeign ordersToProductFeign;
 
     @Autowired
     OrdersToMerchantFeign ordersToMerchantFeign;
@@ -37,8 +37,8 @@ public class OrderController {
     @Autowired
     OrdersToUserFeign ordersToUserFeign;
 
-//    @Autowired
-//    EmailService emailService;
+    @Autowired
+    EmailService emailService;
 
     @PostMapping("/add")
     public ResponseEntity<String> addOrders(@RequestBody List<OrderDetailsDTO> orderDetailsDTOSList) throws AddressException {
@@ -48,17 +48,17 @@ public class OrderController {
             for (OrderDetailsDTO orderDetailsDTO : orderDetailsDTOSList) {
                 orderDetailsList.add(GlobalHelper.OrderDetailsDTOToOrderDetails(orderDetailsDTO));
                 ordersToProductFeign.updateStockByProductIdandMerchantId(orderDetailsDTO.getProductId(),
-                        orderDetailsDTO.getMerchantId(),orderDetailsDTO.getQuantity(),"sold");
+                        orderDetailsDTO.getMerchantId(), orderDetailsDTO.getQuantity(), "sold");
 //                System.out.println(orderDetailsDTO.getQuantity());
-                ordersToMerchantFeign.updateProductsSold(orderDetailsDTO.getMerchantId(),orderDetailsDTO.getQuantity(),
+                ordersToMerchantFeign.updateProductsSold(orderDetailsDTO.getMerchantId(), orderDetailsDTO.getQuantity(),
                         "sold");
             }
             boolean success = orderService.addOrders(orderDetailsList);
             String userIdOfuser = orderDetailsDTOSList.get(0).getUserId();
             String userEmail = ordersToUserFeign.retrieveEmail(userIdOfuser).toString();
-            System.out.println(userEmail +"Here is the userEmail");
+            System.out.println(userEmail + "Here is the userEmail");
             InternetAddress internetAddress = new InternetAddress(userEmail.trim());
-//            emailService.sendSimpleMessage(internetAddress.getAddress(),"Your Order From ShopKart");
+            emailService.sendSimpleMessage(internetAddress.getAddress(), "Your Order From ShopKart");
 
             if (success) {
                 return ResponseEntity.status(HttpStatus.CREATED).body("Orders added successfully.");
@@ -89,7 +89,7 @@ public class OrderController {
             OrderDetails orderDetails = GlobalHelper.OrderDetailsDTOToOrderDetails(inputOrderDetailsDTO);
             boolean success = orderService.updateOrder(orderDetails);
             ordersToProductFeign.updateStockByProductIdandMerchantId(inputOrderDetailsDTO.getProductId(),
-                    inputOrderDetailsDTO.getMerchantId(),inputOrderDetailsDTO.getQuantity(),"update");
+                    inputOrderDetailsDTO.getMerchantId(), inputOrderDetailsDTO.getQuantity(), "update");
             if (success) {
                 return ResponseEntity.ok("Order updated successfully.");
             } else {

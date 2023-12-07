@@ -14,4 +14,6 @@ public interface CartService {
     List<CartItem> getCart(String userId) throws CartProcessingException, CartNotFoundException;
 
     boolean deleteCartItem (String userId , String cartId);
+
+    boolean createOrUpdateCart(String userId, CartItem newCartItems) throws CartProcessingException, CartNotFoundException;
 }
